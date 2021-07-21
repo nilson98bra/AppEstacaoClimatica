@@ -131,11 +131,13 @@ android {
     }
 
     defaultConfig {
+        multiDexEnabled true
         applicationId "com.estacaoclimatica"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        
     }
     splits {
         abi {
@@ -186,9 +188,15 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
+    implementation 'com.android.support:multidex:1.0.3' //enter the latest version
+
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    implementation 'com.android.support:multidex:1.0.3' 
+    
+    implementation 'android.arch.lifecycle:extensions:1.1.0'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
@@ -209,6 +217,15 @@ dependencies {
         releaseImplementation files(hermesPath + "hermes-release.aar")
     } else {
         implementation jscFlavor
+    }
+}
+
+configurations.all {
+        resolutionStrategy {
+            force 'com.google.android.gms:play-services-gcm:16.1.0'
+            force 'com.google.android.gms:play-services-base:16.1.0'
+            force 'com.google.firebase:firebase-core:16.0.9'
+            force 'com.google.firebase:firebase-messaging:18.0.0'
     }
 }
 

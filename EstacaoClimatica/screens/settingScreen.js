@@ -6,7 +6,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const pluviosidade = async (value) => {
   try {
-    await AsyncStorage.setItem('@pluviosidade', value)
+    if(value != ""){
+      await AsyncStorage.setItem('@pluviosidade',value)
+    }
+    
   } catch (e) {
     console.log(e)
   }
@@ -14,7 +17,10 @@ const pluviosidade = async (value) => {
 
 const temperatura = async (value) => {
   try {
-    await AsyncStorage.setItem('@temperatura', value)
+    if(value != ""){
+      await AsyncStorage.setItem('@temperatura', value)
+    }
+    
   } catch (e) {
     console.log(e)
   }
@@ -22,7 +28,10 @@ const temperatura = async (value) => {
 
 const pressao = async (value) => {
   try {
-    await AsyncStorage.setItem('@pressao', value)
+    if(value != ""){
+      await AsyncStorage.setItem('@pressao',value)
+    }
+   
   } catch (e) {
     console.log(e)
   }
@@ -30,7 +39,10 @@ const pressao = async (value) => {
 
 const umidade = async (value) => {
   try {
-    await AsyncStorage.setItem('@umidade', value)
+    if(value != ""){
+      await AsyncStorage.setItem('@umidade',value)
+    }
+    
   } catch (e) {
     console.log(e)
   }
@@ -104,28 +116,22 @@ const Setting = () => {
       temperatura(TextTemperatura)
       pressao(TextPressao)
       umidade(TextUmidade)
-     /* Alert.alert("Salvo", "Informação Salva com sucesso")*/
+     Alert.alert("Aviso", "Dados alterados com sucesso!")
     }
 
     useEffect(() => {
       AsyncStorage.getItem('@pluviosidade').then((value)=>{
         setTextPluviosidade(value)
-        console.log(value)
-        AsyncStorage.getItem('@temperatura').then((value)=>{
-          setTextTemperatura(value)
-          console.log(value)
-          AsyncStorage.getItem('@pressao').then((value)=>{    
-            setTextPressao(value)
-            console.log(value)
-            AsyncStorage.getItem('@umidade').then((value)=>{ 
-              console.log(value)
-              setTextUmidade(value)
-
-            })
-          })
-        })
       })
-
+      AsyncStorage.getItem('@temperatura').then((value)=>{
+        setTextTemperatura(value)
+      })
+      AsyncStorage.getItem('@pressao').then((value)=>{
+        setTextPressao(value)
+      })
+      AsyncStorage.getItem('@umidade').then((value)=>{ 
+        setTextUmidade(value)
+      })
     },[]);
 
 
@@ -140,18 +146,19 @@ const Setting = () => {
             </Text>
           </View>
           <View style={styles.container}>
-            <Text style={styles.labelInput}>Temperatura</Text>
-            <TextInput placeholder="Temperatura" onChangeText={setTextTemperatura}  value={String(TextTemperatura)} style={styles.input}></TextInput>
-            <Text style={styles.labelInput}>Pluviosidade</Text>
-            <TextInput placeholder="Pluviosidade"  onChangeText={setTextPluviosidade}   value={String(TextPluviosidade)} style={styles.input}></TextInput>
-            <Text style={styles.labelInput}>Umidade do Ar</Text>
-            <TextInput placeholder="Umidade do Ar"  onChangeText={setTextUmidade}  value={String(TextUmidade)} style={styles.input}></TextInput>
-            <Text style={styles.labelInput}>Pressão Atmosférica</Text>
-            <TextInput placeholder="Pressão Atmosférica"  onChangeText={setTextPressao}   value = {String(TextPressao)} style={styles.input}></TextInput>
-            <TouchableOpacity style={styles.btn} onPress={saveInformation()}>
+            <Text style={styles.labelInput}>Temperatura (°)</Text>
+            <TextInput placeholder="Temperatura" onChangeText={setTextTemperatura}  value={String(TextTemperatura)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+            <Text style={styles.labelInput}>Pluviosidade (mm)</Text>
+            <TextInput placeholder="Pluviosidade"  onChangeText={setTextPluviosidade}   value={String(TextPluviosidade)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+            <Text style={styles.labelInput}>Umidade do Ar (%)</Text>
+            <TextInput placeholder="Umidade do Ar"  onChangeText={setTextUmidade}  value={String(TextUmidade)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+            <Text style={styles.labelInput}>Pressão Atmosférica (hPa)</Text>
+            <TextInput placeholder="Pressão Atmosférica"  onChangeText={setTextPressao}   value = {String(TextPressao)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+            <TouchableOpacity style={styles.btn} onPress={()=>saveInformation()}>
              
               <Text style={styles.btnText}>Confirmar</Text>
             </TouchableOpacity>
+            
           </View>
         </ImageBackground>
 

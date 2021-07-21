@@ -2,7 +2,6 @@ import React, { useState,useEffect } from 'react';
 import {View, Text, StyleSheet,ImageBackground, TouchableOpacity,Image} from 'react-native'
 const Influxdb = require('influxdb-v2');
 const imagePath = '../assets/background.jpg'
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Moment from 'moment'
 
 
@@ -15,6 +14,7 @@ const Home = ({ navigation: { navigate }  }) => {
   const [Umidade, setUmidade] = useState(0);
   const [DateTemperatura, setDateTemperatura] = useState("00:00");
   const [DateUmidade, setDateUmidade] = useState("00:00");
+  const [DatePressao, setDatePressao] = useState("00:00");
 
   (async () => {
  
@@ -24,26 +24,29 @@ const Home = ({ navigation: { navigate }  }) => {
         protocol: 'http',
         token: 'cVyV1G8DxT1jGK6wS--Ibvbe1TNPsYtgOOeON1Rv07gVc4_0wGn0U9I3SseENzi-IT1XmqPnm6ubugQ_8Hh6qw=='
     });
-    
+ 
     const temperatura = await influxdb.query(
       { orgID: '0f616107822aece2' },
-      //{ query: 'from(bucket: "climate_station") |> range(start: -10s) |> filter(fn: (r) => r._measurement == "sensores")' }
-      //{ query: 'from(bucket: "climate_station") |> range(start: -1h) |> filter(fn: (r) => r._field == "temperature")' },
-      { query: 'from(bucket: "measurements") |> range(start: -5h) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_temperatura" )' }
+      { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_temperatura" )' }
       
   );
  
   const umidade = await influxdb.query(
     { orgID: '0f616107822aece2' },
-    { query: 'from(bucket: "measurements") |> range(start: -5h) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_umidade" )' }
+    { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_umidade" )' }
   )
-    
-    setTemperatura(temperatura[0][5]["_value"])
-    setUmidade(umidade[0][5]["_value"])
-   
-    setDateTemperatura(Moment(temperatura[0][5]["_time"]).format('DD/MM/YYYY HH:mm'))
-    setDateUmidade(Moment(umidade[0][5]["_time"]).format('DD/MM/YYYY HH:mm'))
-    
+
+  const pressao = await influxdb.query(
+    { orgID: '0f616107822aece2' },
+    { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_pressao" )' }
+  )
+
+    setTemperatura(temperatura[0][0]["_value"])
+    setUmidade(umidade[0][0]["_value"])
+    setDateTemperatura(Moment(temperatura[0][0]["_time"]).format('DD/MM/YYYY HH:mm'))
+    setDateUmidade(Moment(umidade[0][0]["_time"]).format('DD/MM/YYYY HH:mm'))
+    setDatePressao(Moment(pressao[0][0]["_time"]).format('DD/MM/YYYY HH:mm'))
+    setPressao(pressao[0][0]["_value"])
   
     let array = []
     // array.push(result)
@@ -53,7 +56,7 @@ const Home = ({ navigation: { navigate }  }) => {
         console.error('\n🐞 An error occurred!', error);
         process.exit(1);
       });
-  const MINUTE_MS = 60000;
+  const MINUTE_MS = 6000;
 
 useEffect(() => {
   
@@ -71,19 +74,28 @@ useEffect(() => {
         { orgID: '0f616107822aece2' },
         //{ query: 'from(bucket: "climate_station") |> range(start: -10s) |> filter(fn: (r) => r._measurement == "sensores")' }
         //{ query: 'from(bucket: "climate_station") |> range(start: -1h) |> filter(fn: (r) => r._field == "temperature")' },
-        { query: 'from(bucket: "measurements") |> range(start: -6h) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_temperatura" )' }
+        { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_temperatura" )' }
         
     );
    
     const umidade = await influxdb.query(
       { orgID: '0f616107822aece2' },
-      { query: 'from(bucket: "measurements") |> range(start: -6h) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_umidade" )' }
+      { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_umidade" )' }
     )
 
-      setTemperatura(temperatura[0][0]["_value"])
-      setUmidade(umidade[0][0]["_value"])
-      setDateTemperatura(Moment(temperatura[0][0]["_time"]).format('DD/MM/YYYY HH:mm'))
-      setDateUmidade(Moment(umidade[0][0]["_time"]).format('DD/MM/YYYY HH:mm'))
+    const pressao = await influxdb.query(
+      { orgID: '0f616107822aece2' },
+      { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_pressao" )' }
+    )
+
+    console.log(temperatura[0][0]["_value"])
+    setTemperatura(temperatura[0][0]["_value"])
+    setUmidade(umidade[0][0]["_value"])
+    setPressao(pressao[0][0]["_value"])
+   
+    setDateTemperatura(Moment(temperatura[0][0]["_time"]).format('DD/MM/YYYY HH:mm'))
+    setDateUmidade(Moment(umidade[0][0]["_time"]).format('DD/MM/YYYY HH:mm'))
+    setDatePressao(Moment(pressao[0][0]["_time"]).format('DD/MM/YYYY HH:mm'))
       
     
       let array = []
@@ -126,7 +138,7 @@ useEffect(() => {
                 <Image source={require('../assets/humidity.png')} style={styles.image}></Image>
                 <View>
                   <Text style={styles.paramName}>Umidade do Ar</Text>
-                  <Text style={styles.value}>Ultimo dado: {Umidade} UR</Text>
+                  <Text style={styles.value}>Ultimo dado: {Umidade}%</Text>
                   <Text style={styles.value}>Data: {DateUmidade}</Text>
                 </View>
                 <TouchableOpacity style={styles.buttonGraphic}  onPress={() =>
@@ -140,7 +152,7 @@ useEffect(() => {
                 <View>
                   <Text style={styles.paramName}>Pluviosidade</Text>
                   <Text style={styles.value}>Ultimo dado: {Pluviosidade} mm</Text>
-                  <Text style={styles.value}>Data</Text>
+                  <Text style={styles.value}>Data:</Text>
                 </View>
                 <TouchableOpacity style={styles.buttonGraphic}   onPress={() =>
                       navigate('SettingGraph', { name: 'Pluviosidade' })} >
@@ -154,7 +166,7 @@ useEffect(() => {
                 <View>
                   <Text style={styles.paramName}>Pressão Atmosférica</Text>
                   <Text style={styles.value}>Ultima dado: {Pressao} hPa</Text>
-                  <Text style={styles.value}>Data</Text>
+                  <Text style={styles.value}>Data: {DatePressao}</Text>
                 </View>
                 <TouchableOpacity style={styles.buttonGraphic}   onPress={() =>
                        navigate('SettingGraph', { name: 'Pressão Atmosférica' })} >
