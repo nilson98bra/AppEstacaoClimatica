@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet,ImageBackground, ScrollView,Dimensions,TouchableOpacity,Image} from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {WebView} from 'react-native-webview'
 import {
   LineChart,
   BarChart,
@@ -12,7 +13,7 @@ import {
 
 const screenWidth = Dimensions.get("window").width;
 const imagePath = '../assets/background.jpg'
-const Graphic = () => {
+const Graphic = ({route}) => {
     
   const data = {
     labels: ["January", "February", "March", "April", "May", "June"],
@@ -39,17 +40,9 @@ const Graphic = () => {
 
 
     return (
-        <ImageBackground source={require('../assets/background.jpg')} style={styles.backgroundImage}>
-          <ScrollView  style={styles.container} horizontal={true}> 
-          <LineChart
-                  
-                  data={data}
-                  width={700}
-                  height={600}
-                  chartConfig={chartConfig}
-                  />
-          </ScrollView>
-        </ImageBackground>
+          <WebView
+              source={{uri: `https://estacao-climatica.herokuapp.com/${route.params.dateInit}/${route.params.dateFinal}/`}}
+          />
 
     );
   }

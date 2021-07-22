@@ -27,18 +27,18 @@ const Home = ({ navigation: { navigate }  }) => {
  
     const temperatura = await influxdb.query(
       { orgID: '0f616107822aece2' },
-      { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_temperatura" )' }
+      { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_temperatura" )' }
       
   );
  
   const umidade = await influxdb.query(
     { orgID: '0f616107822aece2' },
-    { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_umidade" )' }
+    { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_umidade" )' }
   )
 
   const pressao = await influxdb.query(
     { orgID: '0f616107822aece2' },
-    { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_pressao" )' }
+    { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_pressao" )' }
   )
 
     setTemperatura(temperatura[0][0]["_value"])
@@ -74,18 +74,18 @@ useEffect(() => {
         { orgID: '0f616107822aece2' },
         //{ query: 'from(bucket: "climate_station") |> range(start: -10s) |> filter(fn: (r) => r._measurement == "sensores")' }
         //{ query: 'from(bucket: "climate_station") |> range(start: -1h) |> filter(fn: (r) => r._field == "temperature")' },
-        { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_temperatura" )' }
+        { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_temperatura" )' }
         
     );
    
     const umidade = await influxdb.query(
       { orgID: '0f616107822aece2' },
-      { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_umidade" )' }
+      { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_umidade" )' }
     )
 
     const pressao = await influxdb.query(
       { orgID: '0f616107822aece2' },
-      { query: 'from(bucket: "measurements") |> range(start: -1m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_pressao" )' }
+      { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_pressao" )' }
     )
 
     console.log(temperatura[0][0]["_value"])

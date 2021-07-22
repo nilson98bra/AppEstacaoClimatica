@@ -8,40 +8,7 @@ const Influxdb = require('influxdb-v2');
 
 
 
-  (async () => {
- 
-    const influxdb = new Influxdb({
-        host: '52.191.8.121',
-        port: 8086,
-        protocol: 'http',
-        token: 'cVyV1G8DxT1jGK6wS--Ibvbe1TNPsYtgOOeON1Rv07gVc4_0wGn0U9I3SseENzi-IT1XmqPnm6ubugQ_8Hh6qw=='
-    });
     
-    const temperatura = await influxdb.query(
-      { orgID: '0f616107822aece2' },
-      //{ query: 'from(bucket: "climate_station") |> range(start: -10s) |> filter(fn: (r) => r._measurement == "sensores")' }
-      //{ query: 'from(bucket: "climate_station") |> range(start: -1h) |> filter(fn: (r) => r._field == "temperature")' },
-      { query: 'from(bucket: "measurements") |> range(start: -8d, stop:-7d)  |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_temperatura" )' }
-      
-  );
-  
-  const umidade = await influxdb.query(
-    { orgID: '0f616107822aece2' },
-    { query: 'from(bucket: "measurements") |> range(start: -8d, stop:-7d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_umidade" )' }
-  )
-    
-  console.log(temperatura)
-  console.log(umidade)
-    
-  
-    let array = []
-    // array.push(result)
-    // console.log(array)
-    
-    })().catch(error => {
-        console.error('\n🐞 An error occurred!', error);
-        process.exit(1);
-      });
 
 
 
@@ -72,7 +39,10 @@ const SettingGraph = ({ navigation: { navigate }  }) => {
             <DatePicker date={dateFinal} onDateChange={setDateFinal} style={styles.dateComponent}/>
 
             <TouchableOpacity style={styles.btnDate} 
-                onPress={() => dateComparation(dateInit, dateFinal)===true? navigate('Graphic'):Alert.alert(
+                onPress={() => dateComparation(dateInit, dateFinal)===true? navigate('Graphic',{ 
+                  dateInit: dateInit,
+                  dateFinal: dateFinal
+                }):Alert.alert(
                   "ERRO",
                   "Data de inicio não pode ser maior que a data final",
                 )}>
