@@ -1,4 +1,4 @@
-import React, {Component,useEffect} from 'react';
+import React, {Component} from 'react';
 import {NavigationContainer} from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack';
 import Tabs from './navigation/tabs';
@@ -6,24 +6,7 @@ import SettingGraph from './screens/settingGraphScreen';
 import Graphic from './screens/graphicScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PushNotification from "react-native-push-notification";
-
 const Stack = createStackNavigator();
-
-
-const createChannels = () =>{
-  PushNotification.createChannel({
-    channelId: "channel",
-    channelName: "Channel"
-  })
-}
-
-const handleNotification = (parametro,valor,unidade) =>{
-  PushNotification.localNotification({
-    channelId: "channel",
-    title: `Evento Extremo - ${parametro}`,
-    message: `Valor - ${valor}${unidade}`
-  })
-}
 
 
 
@@ -79,35 +62,18 @@ async function getUmidade(){
 }
 
 const App = ()=>{
-  useEffect(() => {
-    createChannels()
-    const MINUTE_MS = 60000;
-
-    const interval = setInterval(() => {
-      handleNotification("Umidade do Ar","70","%")
-      handleNotification("Temperatura","40","º")
-      handleNotification("Pressão Atmosférica","900","hPa")
-    }, MINUTE_MS);
-  
-    return () => clearInterval(interval);
-  })
   console.disableYellowBox = true
     getPluviosidade()
     getTemperatura()
     getPressao()
     getUmidade()
  
-
-
-    handleNotification("Umidade do Ar","70","%")
-    handleNotification("Temperatura","40","º")
-    handleNotification("Pressão Atmosférica","900","hPa")
     return(
       
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Tabs" headerMode="screen">
                 <Stack.Screen name="Tabs" component={Tabs} options={{headerShown:false}}/>
-                <Stack.Screen name="SettingGraph" component={SettingGraph} options={({ route }) => ({ title: route.params.name,  headerTintColor: '#447EF2',})}/>
+                <Stack.Screen name="SettingGraph" component={SettingGraph} options={({ route }) => ({ title: route.params.name})}/>
                 <Stack.Screen name="Graphic" component={Graphic} options={{ title: 'Gráfico' }}/>           
             </Stack.Navigator>
            

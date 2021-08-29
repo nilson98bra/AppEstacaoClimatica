@@ -21,12 +21,12 @@ function MyTabs() {
             style={{
               width:24,
               height:24,
-              tintColor: focused ? '#000' : '#748c94'
+              tintColor: focused ? '#cef2fB' : '#748c94'
             }}
             />
             <Text style={{
               fontSize: 12,
-              color: focused ? '#000' : '#748c94',
+              color: focused ? '#00A9DE' : '#748c94',
               fontWeight: focused ? 'bold' : 'normal'
             }}>HOME</Text>
           </View>
@@ -41,12 +41,12 @@ function MyTabs() {
             style={{
               width:24,
               height:24,
-              tintColor: focused ? '#000' : '#748c94'
+              tintColor: focused ? '#cef2fB' : '#748c94'
             }}
             />
             <Text style={{
               fontSize: 12,
-              color: focused ? '#000' : '#748c94',
+              color: focused ? '#00A9DE' : '#748c94',
               fontWeight: focused ? 'bold' : 'normal'
             }}>CONFIGURAÇÕES</Text>
           </View>

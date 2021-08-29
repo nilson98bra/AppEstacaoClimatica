@@ -139,25 +139,28 @@ const Setting = () => {
 
     return (
 
-        <View style={styles.container}>
+        <ImageBackground source={require('../assets/background.jpg')} style={styles.image}>
           <View style={styles.header}>
-                <Text style={styles.textHeader}>Configurações de Eventos Extremos</Text>
-                <View style={styles.lineHeader}></View> 
-              </View>
-              <Text style={styles.labelInput}>Temperatura (°)</Text>
-              <TextInput placeholder="Temperatura" onChangeText={setTextTemperatura}  value={String(TextTemperatura)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
-              <Text style={styles.labelInput}>Pluviosidade (mm)</Text>
-              <TextInput placeholder="Pluviosidade"  onChangeText={setTextPluviosidade}   value={String(TextPluviosidade)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
-              <Text style={styles.labelInput}>Umidade do Ar (%)</Text>
-              <TextInput placeholder="Umidade do Ar"  onChangeText={setTextUmidade}  value={String(TextUmidade)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
-              <Text style={styles.labelInput}>Pressão Atmosférica (hPa)</Text>
-              <TextInput placeholder="Pressão Atmosférica"  onChangeText={setTextPressao}   value = {String(TextPressao)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
-              <TouchableOpacity style={styles.btn} onPress={()=>saveInformation()}>
-            <Text style={styles.btnText}>Confirmar</Text>
+            <Text style={styles.textHeader} >
+              Configurações de Eventos Extremos
+            </Text>
+          </View>
+          <View style={styles.container}>
+            <Text style={styles.labelInput}>Temperatura (°)</Text>
+            <TextInput placeholder="Temperatura" onChangeText={setTextTemperatura}  value={String(TextTemperatura)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+            <Text style={styles.labelInput}>Pluviosidade (mm)</Text>
+            <TextInput placeholder="Pluviosidade"  onChangeText={setTextPluviosidade}   value={String(TextPluviosidade)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+            <Text style={styles.labelInput}>Umidade do Ar (%)</Text>
+            <TextInput placeholder="Umidade do Ar"  onChangeText={setTextUmidade}  value={String(TextUmidade)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+            <Text style={styles.labelInput}>Pressão Atmosférica (hPa)</Text>
+            <TextInput placeholder="Pressão Atmosférica"  onChangeText={setTextPressao}   value = {String(TextPressao)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+            <TouchableOpacity style={styles.btn} onPress={()=>saveInformation()}>
+             
+              <Text style={styles.btnText}>Confirmar</Text>
             </TouchableOpacity>
             
-            </View>
-      
+          </View>
+        </ImageBackground>
 
     );
   }
@@ -166,52 +169,45 @@ const Setting = () => {
 
   const styles = StyleSheet.create({
     container: {
-      width: "100%",
+      backgroundColor:'rgba(243,243,243,0.69)',
+      width: "95%",
       padding: 10,
-     
+      borderRadius: 10,
+      borderStyle: 'solid',
+      borderColor: "#fff",
+      borderWidth: 2,
+    },
+    image:{
       flex: 1,
-      backgroundColor:"#fff"
-    },
-
-    header: {
-      width: "100%",
-      minHeight: 45,
-      backgroundColor: "#fff",
-      alignItems: "flex-start",
-      justifyContent: "flex-start"
-    },
-    lineHeader:{
-      width: "100%",
-      minHeight: 10,
-      backgroundColor: "#447EF2",
-      
-    },
-    textHeader:{
-      fontSize: 19,
-      fontWeight: "bold",
-      color: "#447EF2",
-      fontFamily: "Roboto",
-     
+      resizeMode: "cover",
+      alignItems: "center"
     },
     input:{
-      backgroundColor: "#f7f7f7",
+      backgroundColor: "#fff",
       marginTop: 5,
       width: "100%",
-      borderRadius: 10,
-      shadowColor: '#000',
-      shadowOffset: {width: 0, height: 1},
-      shadowOpacity: 0.4,
-      elevation: 4
+      borderRadius: 10
     },
     labelInput:{
-      fontSize: 16,
-      color: "#000",
+      fontSize: 20,
+      color: "#00465F",
       fontFamily: "Roboto",
-      marginTop: 5,
-      fontFamily: "Roboto",
-    
+      fontWeight: "bold"
     },
-
+    header:{
+      backgroundColor: "#fff",
+      width: "100%",
+      height: "8%",
+      fontSize: 18,
+      marginBottom: 10,
+      justifyContent: "center",
+      alignItems: "center"
+    },
+    textHeader:{
+      fontSize: 20,
+      fontWeight: "bold",
+      color: "#00A9DE"
+    },
     btn:{
       width: "100%",
       height:50,
@@ -219,15 +215,13 @@ const Setting = () => {
       alignItems: "center",
       justifyContent: "center",
       marginTop: 15,
-      borderRadius: 10,
-      
+      borderRadius: 10
     },
 
     btnText:{
       color:"#fff",
       fontWeight:"bold",
-      fontSize:17,
-      fontFamily: "Roboto",
+      fontSize:17
     }
 
   })
