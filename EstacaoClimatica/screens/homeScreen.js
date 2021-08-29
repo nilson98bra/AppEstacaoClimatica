@@ -3,19 +3,21 @@ import {View, Text, StyleSheet,ImageBackground, TouchableOpacity,Image} from 're
 const Influxdb = require('influxdb-v2');
 const imagePath = '../assets/background.jpg'
 import Moment from 'moment'
-
+import PushNotification from "react-native-push-notification";
 
 
 
 const Home = ({ navigation: { navigate }  }) => {
   const [Temperatura, setTemperatura] = useState(0);
   const [Pressao, setPressao] = useState(0);
-  const [Pluviosidade, setPluviosidade] = useState(0);
   const [Umidade, setUmidade] = useState(0);
   const [DateTemperatura, setDateTemperatura] = useState("00:00");
   const [DateUmidade, setDateUmidade] = useState("00:00");
   const [DatePressao, setDatePressao] = useState("00:00");
 
+
+
+  
   (async () => {
  
     const influxdb = new Influxdb({
@@ -27,18 +29,18 @@ const Home = ({ navigation: { navigate }  }) => {
  
     const temperatura = await influxdb.query(
       { orgID: '0f616107822aece2' },
-      { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_temperatura" )' }
+      { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_temperatura" )' }
       
   );
  
   const umidade = await influxdb.query(
     { orgID: '0f616107822aece2' },
-    { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_umidade" )' }
+    { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_umidade" )' }
   )
 
   const pressao = await influxdb.query(
     { orgID: '0f616107822aece2' },
-    { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_pressao" )' }
+    { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_pressao" )' }
   )
 
     setTemperatura(temperatura[0][0]["_value"])
@@ -56,10 +58,12 @@ const Home = ({ navigation: { navigate }  }) => {
         console.error('\n🐞 An error occurred!', error);
         process.exit(1);
       });
-  const MINUTE_MS = 6000;
+  const MINUTE_MS = 60000;
+
 
 useEffect(() => {
-  
+ 
+
   const interval = setInterval(() => {
     (async () => {
  
@@ -74,21 +78,21 @@ useEffect(() => {
         { orgID: '0f616107822aece2' },
         //{ query: 'from(bucket: "climate_station") |> range(start: -10s) |> filter(fn: (r) => r._measurement == "sensores")' }
         //{ query: 'from(bucket: "climate_station") |> range(start: -1h) |> filter(fn: (r) => r._field == "temperature")' },
-        { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_temperatura" )' }
+        { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_temperatura" )' }
         
     );
    
     const umidade = await influxdb.query(
       { orgID: '0f616107822aece2' },
-      { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_umidade" )' }
+      { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_umidade" )' }
     )
 
     const pressao = await influxdb.query(
       { orgID: '0f616107822aece2' },
-      { query: 'from(bucket: "measurements") |> range(start: -24d) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "payload_fields_pressao" )' }
+      { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_pressao" )' }
     )
 
-    console.log(temperatura[0][0]["_value"])
+   
     setTemperatura(temperatura[0][0]["_value"])
     setUmidade(umidade[0][0]["_value"])
     setPressao(pressao[0][0]["_value"])
@@ -98,9 +102,7 @@ useEffect(() => {
     setDatePressao(Moment(pressao[0][0]["_time"]).format('DD/MM/YYYY HH:mm'))
       
     
-      let array = []
-      // array.push(result)
-      // console.log(array)
+  
       
       })().catch(error => {
           console.error('\n🐞 An error occurred!', error);
@@ -108,74 +110,64 @@ useEffect(() => {
         });
   }, MINUTE_MS);
 
-  return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  return () => clearInterval(interval);
+  
+  
 }, [])
 
 
     return (
 
-        <ImageBackground source={require('../assets/background.jpg')} style={styles.backgroundImage}>
-          <View style={styles.headerHome}>
-              <Text style={styles.headerTitle}>Home</Text>
-          </View>
-          <View style={styles.container}>
-
+  
+      <View style={styles.container}>
+                <View style={styles.header}>
+                <Text style={styles.textHeader}>Home</Text>
+                <View style={styles.lineHeader}></View> 
+              </View>
+                     <TouchableOpacity style={styles.buttonGraphic}  onPress={() =>
+                       navigate('SettingGraph', { name: 'Temperatura' })} >
               <View style={styles.containerParametro}>
                 <Image source={require('../assets/temperatura.png')} style={styles.image}></Image>
                 <View>
                   <Text style={styles.paramName}>Temperatura</Text>
-                  <Text style={styles.value}>Ultimo dado:{Temperatura}°</Text>
-                  <Text style={styles.value}>Data: {DateTemperatura}</Text>
+                  <Text style={styles.value}>Último Dado: {Temperatura}°</Text>
+                  <Text style={styles.value}>Atualizado em: {DateTemperatura}</Text>
                 </View>
-                <TouchableOpacity style={styles.buttonGraphic}  onPress={() =>
-                       navigate('SettingGraph', { name: 'Temperatura' })} >
-                
-                  <Image source={require('../assets/graphic.png')} style={styles.imageGraphic}></Image>
+   
+                </View>
+
                 </TouchableOpacity>
                
-              </View>
+             
+              <TouchableOpacity style={styles.buttonGraphic}  onPress={() =>
+                       navigate('SettingGraph', { name: 'Umidade do Ar' })} >
               <View style={styles.containerParametro}>
                 <Image source={require('../assets/humidity.png')} style={styles.image}></Image>
                 <View>
                   <Text style={styles.paramName}>Umidade do Ar</Text>
-                  <Text style={styles.value}>Ultimo dado: {Umidade}%</Text>
-                  <Text style={styles.value}>Data: {DateUmidade}</Text>
+                  <Text style={styles.value}>Último Dado: {Umidade}%</Text>
+                  <Text style={styles.value}>Atualizado em: {DateUmidade}</Text>
                 </View>
-                <TouchableOpacity style={styles.buttonGraphic}  onPress={() =>
-                       navigate('SettingGraph', { name: 'Umidade do Ar' })} >
-                  <Image source={require('../assets/graphic.png')} style={styles.imageGraphic}></Image>
-                </TouchableOpacity>
-               
-              </View>
-              <View style={styles.containerParametro}>
-                <Image source={require('../assets/rain.png')} style={styles.image}></Image>
-                <View>
-                  <Text style={styles.paramName}>Pluviosidade</Text>
-                  <Text style={styles.value}>Ultimo dado: {Pluviosidade} mm</Text>
-                  <Text style={styles.value}>Data:</Text>
-                </View>
-                <TouchableOpacity style={styles.buttonGraphic}   onPress={() =>
-                      navigate('SettingGraph', { name: 'Pluviosidade' })} >
-                  <Image source={require('../assets/graphic.png')} style={styles.imageGraphic}></Image>
-                </TouchableOpacity>
-               
-              </View>
 
+                </View>
+                </TouchableOpacity>
+               
+           
+
+              <TouchableOpacity style={styles.buttonGraphic}   onPress={() =>
+                       navigate('SettingGraph', { name: 'Pressão Atmosférica' })} >
               <View style={styles.containerParametro}>
                 <Image source={require('../assets/preassure.png')} style={styles.image}></Image>
                 <View>
                   <Text style={styles.paramName}>Pressão Atmosférica</Text>
-                  <Text style={styles.value}>Ultima dado: {Pressao} hPa</Text>
-                  <Text style={styles.value}>Data: {DatePressao}</Text>
-                </View>
-                <TouchableOpacity style={styles.buttonGraphic}   onPress={() =>
-                       navigate('SettingGraph', { name: 'Pressão Atmosférica' })} >
-                  <Image source={require('../assets/graphic.png')} style={styles.imageGraphic}></Image>
-                </TouchableOpacity>
+                  <Text style={styles.value}>Último Dado: {Pressao} hPa</Text>
+                  <Text style={styles.value}>Atualizado em: {DatePressao}</Text>
+                </View> 
+                </View>  
+              </TouchableOpacity>
                
-              </View>
-          </View>          
-        </ImageBackground>
+            
+          </View>
 
     );
   }
@@ -187,42 +179,50 @@ useEffect(() => {
       flex:1,
       flexDirection: "column",
       alignItems: "center",
+      backgroundColor: "#fff",
+      padding: 10,
      
     },
-    backgroundImage:{
-      flex: 1,
-      flexDirection: 'column',
-      resizeMode: "cover",
-      justifyContent: "center"
-    },
-    headerHome:{
+    header: {
       width: "100%",
-      height: "8%",
-      backgroundColor:'#fff',
-      justifyContent: "center",
-      alignItems: "center"
+      minHeight: 45,
+      backgroundColor: "#fff",
+      alignItems: "flex-start",
+      justifyContent: "flex-start"
     },
-    endereco:{
-      fontSize: 23,
+    lineHeader:{
+      width: "100%",
+      minHeight: 10,
+      backgroundColor: "#447EF2",
+      
+    },
+    textHeader:{
+      fontSize: 19,
       fontWeight: "bold",
-      color: "#00A9DE"
+      color: "#447EF2",
+      fontFamily: "Roboto",
+     
     },
-    headerTitle:{
-      fontSize: 20,
-      color: "#00A9DE"
-    },
-    containerParametro:{
-      width: "95%",
+    buttonGraphic:{
+      width: "100%",
       height: "16%",
       marginTop: 18,
-      backgroundColor:'rgba(255,255,255,0.68)',
-      borderStyle: 'solid',
-      borderWidth: 2,
-      borderColor: "#fff",
-      borderRadius: 10,
+      shadowColor: 'rgba(0,0,0, .6)', // IOS
+      shadowOffset: { height: 10, width: 0 }, // IOS
+      backgroundColor: '#fff',
+      elevation: 12, // Android
+      padding: 8
+ 
+    },
+    containerParametro:{
+      width: "100%",
+      height: "100%",   
       alignItems: "center",
-      padding: 8,
-      flexDirection: "row"
+    
+      
+      flexDirection: "row",
+      
+      
     },
     image:{
       width:58,
@@ -230,20 +230,11 @@ useEffect(() => {
       marginRight: 10
 
     },
-    imageGraphic:{
-      width:35,
-      height: 35,
 
-    },
-    buttonGraphic:{
-      position: "absolute",
-      right:0,
-      marginRight: 8
 
-    },
     paramName:{
       fontSize: 20,
-      color: "#00465F",
+      color: "#000",
       fontFamily: "Roboto",
       fontWeight: "bold"
 
@@ -251,7 +242,7 @@ useEffect(() => {
     value:{
       fontSize: 17,
       fontFamily: "Roboto",
-      color: "#00465F",
-      fontWeight: "bold"
+      color: "#000",
+  
     }
   })

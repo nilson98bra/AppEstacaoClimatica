@@ -12,23 +12,13 @@ import {
 } from "react-native-chart-kit";
 
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const imagePath = '../assets/background.jpg'
 const Graphic = ({route}) => {
     
-  const data = {
-    labels: ["January", "February", "March", "April", "May", "June"],
-    datasets: [
-      {
-        data: [20, 45, 28, 80, 99, 43],
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, 
-        strokeWidth: 2 
-      }
-    ],
-    legend: ["Rainy Days"] 
-  };
 
   const chartConfig = {
-    backgroundGradientFrom: "#fff",
+    backgroundGradientFrom: "#FFF",
     backgroundGradientFromOpacity: 0,
     backgroundGradientTo: "#fff",
     backgroundGradientToOpacity: 0.5,
@@ -37,12 +27,31 @@ const Graphic = ({route}) => {
     barPercentage: 0.5,
     useShadowColorFromDataset: false // optional
   };
-
+  const data = {
+    labels: ["January", "February", "March", "April", "May", "June"],
+    datasets: [
+      {
+        data: [20, 45, 28, 80, 99, 43],
+        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // optional
+        strokeWidth: 2 // optional
+      }
+    ],
+    legend: ["Rainy Days"] // optional
+  };
 
     return (
-          <WebView
-              source={{uri: `https://estacao-climatica.herokuapp.com/${route.params.dateInit}/${route.params.dateFinal}/`}}
+
+      <ScrollView
+  horizontal={true}
+  >
+         <LineChart
+            data={data}
+            width={screenWidth*5}
+            height={screenHeight-100}
+            chartConfig={chartConfig}
           />
+  </ScrollView>
+
 
     );
   }

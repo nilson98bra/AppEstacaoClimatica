@@ -198,6 +198,8 @@ dependencies {
     
     implementation 'android.arch.lifecycle:extensions:1.1.0'
 
+    implementation project(':react-native-push-notification')
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
