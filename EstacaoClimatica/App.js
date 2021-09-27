@@ -1,4 +1,4 @@
-import React, {Component,useEffect} from 'react';
+import React, {useEffect } from 'react';
 import {NavigationContainer} from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack';
 import Tabs from './navigation/tabs';
@@ -6,8 +6,7 @@ import SettingGraph from './screens/settingGraphScreen';
 import Graphic from './screens/graphicScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PushNotification from "react-native-push-notification";
-
-const Stack = createStackNavigator();
+import BackgroundFetch from 'react-native-background-fetch';
 
 
 const createChannels = () =>{
@@ -17,6 +16,8 @@ const createChannels = () =>{
   })
 }
 
+
+
 const handleNotification = (parametro,valor,unidade) =>{
   PushNotification.localNotification({
     channelId: "channel",
@@ -25,7 +26,7 @@ const handleNotification = (parametro,valor,unidade) =>{
   })
 }
 
-
+const Stack = createStackNavigator();
 
 async function getPluviosidade(){
     try {
@@ -78,18 +79,38 @@ async function getUmidade(){
       }
 }
 
+async function initBackgroundFetch() {
+  // BackgroundFetch event handler.
+  const onEvent = async (taskId) => {
+    console.log('[BackgroundFetch] task: ', taskId);
+    handleNotification("Umidade do Ar","70","%")
+    handleNotification("Temperatura","40","º")
+    handleNotification("Pressão Atmosférica","900","hPa")
+    await this.addEvent(taskId);
+    // IMPORTANT:  You must signal to the OS that your task is complete.
+    BackgroundFetch.finish(taskId);
+  }
+  const onTimeout = async (taskId) => {
+    console.warn('[BackgroundFetch] TIMEOUT task: ', taskId);
+    BackgroundFetch.finish(taskId);
+  }
+
+  // Initialize BackgroundFetch only once when component mounts.
+  let status = await BackgroundFetch.configure({minimumFetchInterval: 1}, onEvent, onTimeout);
+
+  console.log('[BackgroundFetch] configure status: ', status);
+}
+
+
+
+
 const App = ()=>{
+
   useEffect(() => {
     createChannels()
-    const MINUTE_MS = 60000;
+    initBackgroundFetch()
+ 
 
-    const interval = setInterval(() => {
-      handleNotification("Umidade do Ar","70","%")
-      handleNotification("Temperatura","40","º")
-      handleNotification("Pressão Atmosférica","900","hPa")
-    }, MINUTE_MS);
-  
-    return () => clearInterval(interval);
   })
   console.disableYellowBox = true
     getPluviosidade()
@@ -97,17 +118,12 @@ const App = ()=>{
     getPressao()
     getUmidade()
  
-
-
-    handleNotification("Umidade do Ar","70","%")
-    handleNotification("Temperatura","40","º")
-    handleNotification("Pressão Atmosférica","900","hPa")
     return(
       
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Tabs" headerMode="screen">
                 <Stack.Screen name="Tabs" component={Tabs} options={{headerShown:false}}/>
-                <Stack.Screen name="SettingGraph" component={SettingGraph} options={({ route }) => ({ title: route.params.name,  headerTintColor: '#447EF2',})}/>
+                <Stack.Screen name="SettingGraph" component={SettingGraph} options={({ route }) => ({ title: route.params.name})}/>
                 <Stack.Screen name="Graphic" component={Graphic} options={{ title: 'Gráfico' }}/>           
             </Stack.Navigator>
            
