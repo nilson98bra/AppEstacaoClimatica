@@ -4,19 +4,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {WebView} from 'react-native-webview'
 import {
   LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart
+
 } from "react-native-chart-kit";
+
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 const imagePath = '../assets/background.jpg'
-const Graphic = ({route}) => {
+const Graphic = ({ navigation: { navigate }, route  }) => {
     
-
+  const values = route.params.values;
+  let dates = route.params.dates;
+  
+  const variableWidth = dates.length >= 100?(dates.length*4)/100:1
+  if(dates.length >20){
+    let aux=Math.ceil(dates.length/20)
+    dates = dates.map((curr)=>{
+      if(aux<Math.ceil(dates.length/20)){
+        aux=aux+1
+        return ""
+      }
+      aux=0
+      return curr
+    })
+  }
+  console.log(dates)
+  console.log(variableWidth)
   const chartConfig = {
     backgroundGradientFrom: "#FFF",
     backgroundGradientFromOpacity: 0,
@@ -28,10 +41,10 @@ const Graphic = ({route}) => {
     useShadowColorFromDataset: false // optional
   };
   const data = {
-    labels: ["January", "February", "March", "April", "May", "June"],
+    labels: dates,
     datasets: [
       {
-        data: [20, 45, 28, 80, 99, 43],
+        data: values,
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // optional
         strokeWidth: 2 // optional
       }
@@ -45,9 +58,10 @@ const Graphic = ({route}) => {
   horizontal={true}
   >
          <LineChart
+         verticalLabelRotation={110}
             data={data}
-            width={screenWidth*5}
-            height={screenHeight-100}
+            width={screenWidth*variableWidth}
+            height={screenHeight-170}
             chartConfig={chartConfig}
           />
   </ScrollView>

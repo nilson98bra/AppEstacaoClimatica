@@ -9,6 +9,7 @@ import PushNotification from "react-native-push-notification";
 import BackgroundFetch from 'react-native-background-fetch';
 
 
+
 const createChannels = () =>{
   PushNotification.createChannel({
     channelId: "channel",
@@ -79,13 +80,21 @@ async function getUmidade(){
       }
 }
 
-async function initBackgroundFetch() {
-  // BackgroundFetch event handler.
-  const onEvent = async (taskId) => {
+function teste(taskId){
+  setInterval(()=>{
     console.log('[BackgroundFetch] task: ', taskId);
     handleNotification("Umidade do Ar","70","%")
     handleNotification("Temperatura","40","º")
     handleNotification("Pressão Atmosférica","900","hPa")
+    BackgroundFetch.finish(taskId);
+  },1000)
+}
+
+async function initBackgroundFetch() {
+  // BackgroundFetch event handler.
+  const onEvent = async (taskId) => {
+
+    teste(taskId)
     await this.addEvent(taskId);
     // IMPORTANT:  You must signal to the OS that your task is complete.
     BackgroundFetch.finish(taskId);

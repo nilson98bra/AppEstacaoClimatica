@@ -9,8 +9,31 @@ const imagePath = '../assets/background.jpg'
 const Influxdb = require('influxdb-v2');
 
 
+function generateValues(nNumbers){
+  const values = Array.from(Array(nNumbers).keys()).map(()=>{
+    return Math.floor(Math.random() * nNumbers)
+})
+return values
+}
 
-    
+
+
+
+function getDates (startDate, nDays) {
+  const dates = []
+  for(let i=0; i<nDays; i++){
+    let day = Moment(Moment(startDate, "DD-MM-YYYY").add(i, 'days')).format("YYYY-MM-DD")
+    dates.push(day)
+  }
+
+  return dates
+}
+
+// Usage
+const dates = getDates(new Date("2021-06-22"), 537)
+const values = generateValues(537)
+
+
 
 
 
@@ -142,7 +165,9 @@ const SettingGraph = ({ navigation: { navigate }, route  }) => {
                 onPress={() => dateComparation(dateInit, hourInit,dateFinal, hourFinal)===true? navigate('Graphic',{ 
                   dateInit: dateInit,
                   dateFinal: dateFinal,
-                  parametro: route.params.name
+                  parametro: route.params.name,
+                  values: values,
+                  dates: dates
                 }):Alert.alert(
                   "ERRO",
                   "Data de inicio não pode ser maior ou igual que a data final",
