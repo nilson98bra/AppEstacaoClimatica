@@ -30,8 +30,8 @@ function getDates (startDate, nDays) {
 }
 
 // Usage
-const dates = getDates(new Date("2021-06-22"), 537)
-const values = generateValues(537)
+const dates = getDates(new Date("2021-06-22"), 137)
+const values = generateValues(137)
 
 
 

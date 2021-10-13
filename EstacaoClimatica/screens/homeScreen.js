@@ -21,26 +21,26 @@ const Home = ({ navigation: { navigate }  }) => {
   (async () => {
  
     const influxdb = new Influxdb({
-        host: '52.191.8.121',
+        host: '10.0.0.102',
         port: 8086,
         protocol: 'http',
-        token: 'cVyV1G8DxT1jGK6wS--Ibvbe1TNPsYtgOOeON1Rv07gVc4_0wGn0U9I3SseENzi-IT1XmqPnm6ubugQ_8Hh6qw=='
+        token: 'zdakdp9Gma-Umt-WGrbx5SkJGGOCOK-YpzPg4wvU3S68O2yCjPxU-c_DnXoFxFqEhIxkj2mOzRVUXJexaV9yoQ=='
     });
  
     const temperatura = await influxdb.query(
       { orgID: '0f616107822aece2' },
-      { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_temperatura" )' }
+      { query: 'from(bucket: "measurements") |> range(start: -2018-05-22T23:30:00Z) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_temperatura" )' }
       
   );
  
   const umidade = await influxdb.query(
     { orgID: '0f616107822aece2' },
-    { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_umidade" )' }
+    { query: 'from(bucket: "measurements") |> range(start: -2018-05-22T23:30:00Z) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_umidade" )' }
   )
-
+nilson
   const pressao = await influxdb.query(
     { orgID: '0f616107822aece2' },
-    { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_pressao" )' }
+    { query: 'from(bucket: "measurements") |> range(start: -2018-05-22T23:30:00Z) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_pressao" )' }
   )
 
     setTemperatura(temperatura[0][0]["_value"])
@@ -51,8 +51,7 @@ const Home = ({ navigation: { navigate }  }) => {
     setPressao(pressao[0][0]["_value"])
   
     let array = []
-    // array.push(result)
-    // console.log(array)
+
     
     })().catch(error => {
         console.error('\n🐞 An error occurred!', error);
@@ -64,35 +63,35 @@ const Home = ({ navigation: { navigate }  }) => {
 useEffect(() => {
  
 
+  
   const interval = setInterval(() => {
     (async () => {
  
       const influxdb = new Influxdb({
-          host: '52.191.8.121',
+          host: '10.0.0.102',
           port: 8086,
           protocol: 'http',
-          token: 'cVyV1G8DxT1jGK6wS--Ibvbe1TNPsYtgOOeON1Rv07gVc4_0wGn0U9I3SseENzi-IT1XmqPnm6ubugQ_8Hh6qw=='
+          token: 'zdakdp9Gma-Umt-WGrbx5SkJGGOCOK-YpzPg4wvU3S68O2yCjPxU-c_DnXoFxFqEhIxkj2mOzRVUXJexaV9yoQ=='
       });
       
       const temperatura = await influxdb.query(
         { orgID: '0f616107822aece2' },
-        //{ query: 'from(bucket: "climate_station") |> range(start: -10s) |> filter(fn: (r) => r._measurement == "sensores")' }
-        //{ query: 'from(bucket: "climate_station") |> range(start: -1h) |> filter(fn: (r) => r._field == "temperature")' },
-        { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_temperatura" )' }
+    
+        { query: 'from(bucket: "measurements") |> range(start: --2018-05-22T23:30:00Z) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_temperatura" )' }
         
     );
    
     const umidade = await influxdb.query(
       { orgID: '0f616107822aece2' },
-      { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_umidade" )' }
+      { query: 'from(bucket: "measurements") |> range(start: --2018-05-22T23:30:00Z) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_umidade" )' }
     )
 
     const pressao = await influxdb.query(
       { orgID: '0f616107822aece2' },
-      { query: 'from(bucket: "measurements") |> range(start: -2m) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_pressao" )' }
+      { query: 'from(bucket: "measurements") |> range(start: --2018-05-22T23:30:00Z) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_pressao" )' }
     )
 
-   
+   console.log("pressao", pressao)
     setTemperatura(temperatura[0][0]["_value"])
     setUmidade(umidade[0][0]["_value"])
     setPressao(pressao[0][0]["_value"])

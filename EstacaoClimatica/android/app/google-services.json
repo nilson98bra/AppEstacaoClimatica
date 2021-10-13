@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1002991594458",
+    "project_id": "estacaoclimatica-e70d8",
+    "storage_bucket": "estacaoclimatica-e70d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1002991594458:android:a75f99b96be1e3d6f22ee3",
+        "android_client_info": {
+          "package_name": "com.estacaoclimatica"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1002991594458-4r2v3g0oo6pcurmt4ok4f1s4j4ld8ehn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7m97nOn8HtnpySi7KkV_D4Q-_n3kE5ME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1002991594458-4r2v3g0oo6pcurmt4ok4f1s4j4ld8ehn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

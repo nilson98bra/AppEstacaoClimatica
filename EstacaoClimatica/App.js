@@ -7,8 +7,8 @@ import Graphic from './screens/graphicScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PushNotification from "react-native-push-notification";
 import BackgroundFetch from 'react-native-background-fetch';
-
-
+import BackgroundTimer from 'react-native-background-timer';
+import BackgroundService from 'react-native-background-actions';
 
 const createChannels = () =>{
   PushNotification.createChannel({
@@ -81,46 +81,46 @@ async function getUmidade(){
 }
 
 function teste(taskId){
-  setInterval(()=>{
-    console.log('[BackgroundFetch] task: ', taskId);
+  BackgroundTimer.runBackgroundTimer(() => { 
     handleNotification("Umidade do Ar","70","%")
     handleNotification("Temperatura","40","º")
     handleNotification("Pressão Atmosférica","900","hPa")
-    BackgroundFetch.finish(taskId);
-  },1000)
+    }, 
+    10000);
 }
-
-async function initBackgroundFetch() {
-  // BackgroundFetch event handler.
+const MyHeadlessTask = async() =>{
   const onEvent = async (taskId) => {
-
     teste(taskId)
     await this.addEvent(taskId);
-    // IMPORTANT:  You must signal to the OS that your task is complete.
     BackgroundFetch.finish(taskId);
   }
   const onTimeout = async (taskId) => {
     console.warn('[BackgroundFetch] TIMEOUT task: ', taskId);
     BackgroundFetch.finish(taskId);
   }
+  let status = await BackgroundFetch.configure({
+    stopOnTerminate: false,startOnBoot: true,enableHeadless: true}, onEvent, onTimeout);
 
-  // Initialize BackgroundFetch only once when component mounts.
-  let status = await BackgroundFetch.configure({minimumFetchInterval: 1}, onEvent, onTimeout);
-
-  console.log('[BackgroundFetch] configure status: ', status);
 }
 
-
-
-
 const App = ()=>{
-
   useEffect(() => {
     createChannels()
-    initBackgroundFetch()
+    BackgroundFetch.registerHeadlessTask(MyHeadlessTask);
+
+   /*BackgroundTimer.runBackgroundTimer(() => { 
+
+      handleNotification("Umidade do Ar","70","%")
+      handleNotification("Temperatura","40","º")
+      handleNotification("Pressão Atmosférica","900","hPa")
+      }, 
+      60000);*/
  
 
   })
+ 
+  
+
   console.disableYellowBox = true
     getPluviosidade()
     getTemperatura()
