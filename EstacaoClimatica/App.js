@@ -80,18 +80,15 @@ async function getUmidade(){
       }
 }
 
-function teste(taskId){
-  BackgroundTimer.runBackgroundTimer(() => { 
-    handleNotification("Umidade do Ar","70","%")
-    handleNotification("Temperatura","40","º")
-    handleNotification("Pressão Atmosférica","900","hPa")
-    }, 
-    10000);
-}
+
 const MyHeadlessTask = async() =>{
   const onEvent = async (taskId) => {
-    teste(taskId)
-    await this.addEvent(taskId);
+    BackgroundTimer.runBackgroundTimer(() => { 
+      handleNotification("Umidade do Ar","70","%")
+      handleNotification("Temperatura","40","º")
+      handleNotification("Pressão Atmosférica","900","hPa")
+      }, 
+      10000);
     BackgroundFetch.finish(taskId);
   }
   const onTimeout = async (taskId) => {
