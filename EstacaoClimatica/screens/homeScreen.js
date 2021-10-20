@@ -64,7 +64,7 @@ useEffect(() => {
  
 
   
-  const interval = setInterval(() => {
+  /*const interval = setInterval(() => {
     (async () => {
  
       const influxdb = new Influxdb({
@@ -109,7 +109,7 @@ useEffect(() => {
         });
   }, MINUTE_MS);
 
-  return () => clearInterval(interval);
+  return () => clearInterval(interval);*/
   
   
 }, [])

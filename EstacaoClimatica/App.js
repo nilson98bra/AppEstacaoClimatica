@@ -10,6 +10,10 @@ import BackgroundFetch from 'react-native-background-fetch';
 import BackgroundTimer from 'react-native-background-timer';
 import BackgroundService from 'react-native-background-actions';
 
+let data = new Date()
+let second = data.getSeconds();
+let value=60000-(second*1000)
+let firstTime = true
 const createChannels = () =>{
   PushNotification.createChannel({
     channelId: "channel",
@@ -19,11 +23,12 @@ const createChannels = () =>{
 
 
 
-const handleNotification = (parametro,valor,unidade) =>{
+const handleNotification = (parametro,valor,unidade,dia,mes,ano,hora,minuto,segundo) =>{
   PushNotification.localNotification({
     channelId: "channel",
-    title: `Evento Extremo - ${parametro}`,
-    message: `Valor - ${valor}${unidade}`
+    title: `${parametro} - ${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`,
+    message: `Valor - ${valor}${unidade}`,
+    priority: "high"
   })
 }
 
@@ -81,29 +86,31 @@ async function getUmidade(){
 }
 
 
-const MyHeadlessTask = async() =>{
-  const onEvent = async (taskId) => {
-    BackgroundTimer.runBackgroundTimer(() => { 
-      handleNotification("Umidade do Ar","70","%")
-      handleNotification("Temperatura","40","º")
-      handleNotification("Pressão Atmosférica","900","hPa")
-      }, 
-      10000);
-    BackgroundFetch.finish(taskId);
-  }
-  const onTimeout = async (taskId) => {
-    console.warn('[BackgroundFetch] TIMEOUT task: ', taskId);
-    BackgroundFetch.finish(taskId);
-  }
-  let status = await BackgroundFetch.configure({
-    stopOnTerminate: false,startOnBoot: true,enableHeadless: true}, onEvent, onTimeout);
 
-}
+
 
 const App = ()=>{
   useEffect(() => {
     createChannels()
-    BackgroundFetch.registerHeadlessTask(MyHeadlessTask);
+    setTimeout(()=>{
+      data = new Date()
+    
+        console.log("BackgroundTimer - VAMOOO: ",value)
+          handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
+          /*handleNotification("Temperatura","40","º")
+          handleNotification("Pressão Atmosférica","900","hPa")*/
+          BackgroundTimer.runBackgroundTimer(() => { 
+            data = new Date()
+        
+            console.log("BackgroundTimer - VAMOOO: ")
+              handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
+              /*handleNotification("Temperatura","40","º")
+              handleNotification("Pressão Atmosférica","900","hPa")*/
+              }, 
+             60000);
+    },value)
+
+
 
    /*BackgroundTimer.runBackgroundTimer(() => { 
 
