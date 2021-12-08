@@ -14,22 +14,16 @@ const imagePath = '../assets/background.jpg'
 const Graphic = ({ navigation: { navigate }, route  }) => {
     
   const values = route.params.values;
-  let dates = route.params.dates;
+  const dates = route.params.dates;
+  const dtInit = route.params.dateInit
+  const dtFinal = route.params.dateInit
+  const params = route.params.parametro
+  console.log(params)
+  console.log(dtInit)
+  console.log(dtFinal)
+  const variableWidth = dates.length >= 1000?(2000*4)/1000:1
+
   
-  const variableWidth = dates.length >= 100?(dates.length*4)/100:1
-  if(dates.length >20){
-    let aux=Math.ceil(dates.length/20)
-    dates = dates.map((curr)=>{
-      if(aux<Math.ceil(dates.length/20)){
-        aux=aux+1
-        return ""
-      }
-      aux=0
-      return curr
-    })
-  }
-  console.log(dates)
-  console.log(variableWidth)
   const chartConfig = {
     backgroundGradientFrom: "#FFF",
     backgroundGradientFromOpacity: 0,
@@ -54,7 +48,7 @@ const Graphic = ({ navigation: { navigate }, route  }) => {
 
     return (
 
-      <ScrollView
+     /* <ScrollView
   horizontal={true}
   >
          <LineChart
@@ -64,8 +58,10 @@ const Graphic = ({ navigation: { navigate }, route  }) => {
             height={screenHeight-170}
             chartConfig={chartConfig}
           />
-  </ScrollView>
-
+  </ScrollView>*/
+     <WebView
+     source={{uri: `http://10.0.0.194:3000/${params}/${dtInit}/${dtFinal}/`}}
+   />
 
     );
   }

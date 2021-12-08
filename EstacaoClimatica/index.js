@@ -2,20 +2,21 @@
  * @format
  */
 
- import {AppRegistry} from 'react-native';
- import React, {useEffect } from 'react';
+ import {AppState,AppRegistry} from 'react-native';
+ import React, {useRef,useEffect } from 'react';
  import App from './App';
  import {name as appName} from './app.json';
  import PushNotification from "react-native-push-notification";
  import BackgroundFetch from 'react-native-background-fetch';
  import BackgroundTimer from 'react-native-background-timer';
  import AsyncStorage from '@react-native-async-storage/async-storage';
+ import {Alert} from 'react-native'
  
 
  let data = new Date()
  let second = data.getSeconds();
- let value=60000-(second*1000)
 
+ let countMsg = 0
 const createChannels = () =>{
   PushNotification.createChannel({
     channelId: "channel",
@@ -44,16 +45,38 @@ const handleNotification = (parametro,valor,unidade,dia,mes,ano,hora,minuto,segu
 
  
  let MyHeadlessTask = async (event) => {
+  BackgroundTimer.stopBackgroundTimer()
   let taskId = event.taskId;
-  console.log('[BackgroundFetch HeadlessTask] start: headless');
-  
-  data = new Date()
-  second = data.getSeconds();
-  value=60000-(second*1000)
-  console.log("BackgroundTimer - VAMOOO: ", value)
-  handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
+  BackgroundTimer.runBackgroundTimer(() => { 
+    data = new Date()
+    AsyncStorage.getItem('@UmidadeMinuto').then(async (value)=>{
+      if(data.getMinutes() != value){
+        handleNotification("AAAAAAAAAAAAAAAAAA","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
+        AsyncStorage.setItem('@UmidadeMinuto', String(data.getMinutes())).then(()=>{
+          console.log("FOI")
+        })                     
+      }
+    })
+    
+      /*handleNotification("Temperatura","40","º")
+      handleNotification("Pressão Atmosférica","900","hPa")*/
+      }, 
+     20000)
 
+    /*AsyncStorage.getItem('@UmidadeMinuto').then(async (value)=>{
+      console.log(value)
+      if(data.getMinutes() != value){
+        
+        handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
+        AsyncStorage.setItem('@UmidadeMinuto', String(data.getMinutes())).then(()=>[
+          console.log("FOI")
+        ])
+      }
+    })*/
+
+    BackgroundFetch.finish(taskId);
 }
+
 
 
 
@@ -64,9 +87,15 @@ const handleNotification = (parametro,valor,unidade,dia,mes,ano,hora,minuto,segu
     stopOnTerminate: false,
     enableHeadless: true,
     startOnBoot: true,
-  }, async (taskId) => {
+    requiresBatteryNotLow: false,
+    requiresStorageNotLow: false
+  },async (taskId) => {
   
     console.log('[BackgroundFetch HeadlessTask] start:', taskId);
+
+  },async (taskId) => {
+  
+    BackgroundFetch.finish(taskId);
 
   })
 

@@ -21,19 +21,22 @@ return values
 
 function getDates (startDate, nDays) {
   const dates = []
+  let aux=0
   for(let i=0; i<nDays; i++){
-    let day = Moment(Moment(startDate, "DD-MM-YYYY").add(i, 'days')).format("YYYY-MM-DD")
-    dates.push(day)
-  }
-
+  
+        let day = Moment(Moment(startDate, "DD-MM-YYYY").add(i, 'minutes')).format("YYYY-MM-DD HH:mm:ss")
+        dates.push(day)
+      }
+    
+    
   return dates
 }
 
 // Usage
-const dates = getDates(new Date("2021-06-22"), 137)
-const values = generateValues(137)
+const dates = getDates(new Date("2017-06-22"), 1440)
+const values = generateValues(1440)
 
-
+console.log(dates)
 
 
 

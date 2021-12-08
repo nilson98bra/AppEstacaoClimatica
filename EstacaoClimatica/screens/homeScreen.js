@@ -37,7 +37,7 @@ const Home = ({ navigation: { navigate }  }) => {
     { orgID: '0f616107822aece2' },
     { query: 'from(bucket: "measurements") |> range(start: -2018-05-22T23:30:00Z) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_umidade" )' }
   )
-nilson
+
   const pressao = await influxdb.query(
     { orgID: '0f616107822aece2' },
     { query: 'from(bucket: "measurements") |> range(start: -2018-05-22T23:30:00Z) |> filter(fn: (r) => r._measurement == "mqtt_consumer" and r._field == "uplink_message_decoded_payload_pressao" )' }

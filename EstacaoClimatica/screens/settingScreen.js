@@ -4,6 +4,8 @@ import {View, Text,TextInput, StyleSheet,ImageBackground,Dimensions, TouchableOp
 const imagePath = '../assets/background.jpg'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+
 const pluviosidade = async (value) => {
   try {
     if(value != ""){
@@ -104,7 +106,7 @@ const [Umidade, setUmidade] = useState(getUmidade);*/
 const Setting = () => {
 
 
-
+    const [isSelected, setSelection] = useState(false);
     const [TextPluviosidade, setTextPluviosidade] = useState([]);
     const [TextTemperatura, setTextTemperatura] = useState([]);
     const [TextPressao, setTextPressao] =  useState([]);
@@ -132,6 +134,15 @@ const Setting = () => {
       AsyncStorage.getItem('@umidade').then((value)=>{ 
         setTextUmidade(value)
       })
+      AsyncStorage.getItem('@checkbox').then((value)=>{
+        if(value==="true"){
+          setSelection(true)
+        }
+        else{
+          setSelection(false)
+        }
+        
+      })
     },[]);
 
 
@@ -152,6 +163,7 @@ const Setting = () => {
               <TextInput placeholder="Umidade do Ar"  onChangeText={setTextUmidade}  value={String(TextUmidade)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
               <Text style={styles.labelInput}>Pressão Atmosférica (hPa)</Text>
               <TextInput placeholder="Pressão Atmosférica"  onChangeText={setTextPressao}   value = {String(TextPressao)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+
               <TouchableOpacity style={styles.btn} onPress={()=>saveInformation()}>
             <Text style={styles.btnText}>Confirmar</Text>
             </TouchableOpacity>

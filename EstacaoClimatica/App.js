@@ -11,6 +11,7 @@ import BackgroundTimer from 'react-native-background-timer';
 import BackgroundService from 'react-native-background-actions';
 
 let data = new Date()
+let checkFirstTime 
 let second = data.getSeconds();
 let value=60000-(second*1000)
 let firstTime = true
@@ -73,16 +74,65 @@ async function getPressao(){
 }
 }
 
-async function getUmidade(){
-    try {
-        const value = await AsyncStorage.getItem('@umidade');
-        if (value === null) {
-          // We have data!!
-          await AsyncStorage.setItem('@umidade',"90")
-        }
 
-      } catch (error) {
+async function createMinuteUmidade(){
+  try {
+      const value = await AsyncStorage.getItem('@UmidadeMinuto');
+      if (value === null) {
+        // We have data!!
+        await AsyncStorage.setItem('@UmidadeMinuto',"")
       }
+
+    } catch (error) {
+    }
+}
+
+async function createMinuteTemperatura(){
+  try {
+      const value = await AsyncStorage.getItem('@TemperaturaMinuto');
+      if (value === null) {
+        // We have data!!
+        await AsyncStorage.setItem('@TemperaturaMinuto',"")
+      }
+
+    } catch (error) {
+    }
+}
+
+async function createMinutePressao(){
+  try {
+      const value = await AsyncStorage.getItem('@PressaoeMinuto');
+      if (value === null) {
+        // We have data!!
+        await AsyncStorage.setItem('@PressaoMinuto',"")
+      }
+
+    } catch (error) {
+    }
+}
+
+async function stateActive(){
+  try {
+    const value = await AsyncStorage.getItem('@firstTime');
+    if (value === null) {
+      // We have data!!
+      await AsyncStorage.setItem('@firstTime',"false")
+    }
+
+  } catch (error) {
+  }
+}
+
+async function activeCheckbox(){
+  try {
+    const value = await AsyncStorage.getItem('@checkbox');
+    if (value === null) {
+      // We have data!!
+      await AsyncStorage.setItem('@checkbox',"true")
+    }
+
+  } catch (error) {
+  }
 }
 
 
@@ -92,33 +142,46 @@ async function getUmidade(){
 const App = ()=>{
   useEffect(() => {
     createChannels()
+    stateActive()
     setTimeout(()=>{
       data = new Date()
-    
-        console.log("BackgroundTimer - VAMOOO: ",value)
-          handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
-          /*handleNotification("Temperatura","40","º")
+
+         /* handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
+          handleNotification("Temperatura","40","º")
           handleNotification("Pressão Atmosférica","900","hPa")*/
-          BackgroundTimer.runBackgroundTimer(() => { 
-            data = new Date()
-        
-            console.log("BackgroundTimer - VAMOOO: ")
-              handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
-              /*handleNotification("Temperatura","40","º")
-              handleNotification("Pressão Atmosférica","900","hPa")*/
-              }, 
-             60000);
+          
+          AsyncStorage.getItem('@firstTime').then(async (valueFirst)=>{
+            console.log("olaa: ",valueFirst)
+            if(valueFirst == "false"){
+              AsyncStorage.setItem('@firstTime', "true").then(()=>{
+                console.log("aqui ficou true")
+                checkFirstTime = true
+              })  
+              BackgroundTimer.runBackgroundTimer(() => { 
+                data = new Date()
+                if(checkFirstTime == true){
+                  AsyncStorage.getItem('@UmidadeMinuto').then(async (value)=>{
+                    console.log(value)
+                    if(data.getMinutes() != value){
+                      
+                      handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
+                      AsyncStorage.setItem('@UmidadeMinuto', String(data.getMinutes())).then(()=>{
+                        console.log("FOI")
+                      })                     
+                    }
+                  })
+                }
+
+                
+                  /*handleNotification("Temperatura","40","º")
+                  handleNotification("Pressão Atmosférica","900","hPa")*/
+                  }, 
+                 20000)                   
+            }
+          })
+;
     },value)
 
-
-
-   /*BackgroundTimer.runBackgroundTimer(() => { 
-
-      handleNotification("Umidade do Ar","70","%")
-      handleNotification("Temperatura","40","º")
-      handleNotification("Pressão Atmosférica","900","hPa")
-      }, 
-      60000);*/
  
 
   })
@@ -129,8 +192,11 @@ const App = ()=>{
     getPluviosidade()
     getTemperatura()
     getPressao()
-    getUmidade()
- 
+    createMinutePressao()
+    createMinuteTemperatura()
+    createMinuteUmidade()
+   
+   
     return(
       
         <NavigationContainer>
