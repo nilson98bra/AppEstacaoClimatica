@@ -3,19 +3,9 @@ const screenWidth = Dimensions.get("window").width;
 import {View, Text,TextInput, StyleSheet,ImageBackground,Dimensions, TouchableOpacity,Alert} from 'react-native'
 const imagePath = '../assets/background.jpg'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
-
-const pluviosidade = async (value) => {
-  try {
-    if(value != ""){
-      await AsyncStorage.setItem('@pluviosidade',value)
-    }
-    
-  } catch (e) {
-    console.log(e)
-  }
-}
+import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+ 
+let indexRdb = 0
 
 const temperatura = async (value) => {
   try {
@@ -43,6 +33,17 @@ const umidade = async (value) => {
   try {
     if(value != ""){
       await AsyncStorage.setItem('@umidade',value)
+    }
+    
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+const radiobutton = async (value) => {
+  try {
+    if(value !== null){
+      await AsyncStorage.setItem('@radiobutton',String(value))
     }
     
   } catch (e) {
@@ -105,25 +106,40 @@ const [Umidade, setUmidade] = useState(getUmidade);*/
 
 const Setting = () => {
 
+  var radio_props = [
+    {label: 'Sim', value: 0 },
+    {label: 'Não', value: 1 },
+    
+  ];
 
-    const [isSelected, setSelection] = useState(false);
-    const [TextPluviosidade, setTextPluviosidade] = useState([]);
     const [TextTemperatura, setTextTemperatura] = useState([]);
     const [TextPressao, setTextPressao] =  useState([]);
     const [TextUmidade, setTextUmidade] = useState([]);
-  
+    const [option, setOption] = useState([]);
+    const [loading, setLoading] = useState(true);
     
     function saveInformation(){
-      pluviosidade(TextPluviosidade)
-      temperatura(TextTemperatura)
+      if(isNaN(TextTemperatura) === true || isNaN(TextPressao) === true || isNaN(TextUmidade) === true){
+        Alert.alert("Aviso", "Cheque se os valores estão corretos!")
+      }
+      else{
+        temperatura(TextTemperatura)
       pressao(TextPressao)
       umidade(TextUmidade)
-     Alert.alert("Aviso", "Dados alterados com sucesso!")
+      radiobutton(option)
+      console.log("eaaaaaa option", option)
+      Alert.alert("Aviso", "Dados alterados com sucesso!")
+      }
+      
     }
 
     useEffect(() => {
-      AsyncStorage.getItem('@pluviosidade').then((value)=>{
-        setTextPluviosidade(value)
+
+      AsyncStorage.getItem('@radiobutton').then((value)=>{ 
+        indexRdb = parseInt(value)
+        console.log("boa: ",indexRdb)
+        setLoading(false)
+          
       })
       AsyncStorage.getItem('@temperatura').then((value)=>{
         setTextTemperatura(value)
@@ -134,44 +150,47 @@ const Setting = () => {
       AsyncStorage.getItem('@umidade').then((value)=>{ 
         setTextUmidade(value)
       })
-      AsyncStorage.getItem('@checkbox').then((value)=>{
-        if(value==="true"){
-          setSelection(true)
-        }
-        else{
-          setSelection(false)
-        }
-        
-      })
+
+
     },[]);
 
 
 
 
-    return (
+  return (
 
-        <View style={styles.container}>
-          <View style={styles.header}>
-                <Text style={styles.textHeader}>Configurações de Eventos Extremos</Text>
-                <View style={styles.lineHeader}></View> 
-              </View>
-              <Text style={styles.labelInput}>Temperatura (°)</Text>
-              <TextInput placeholder="Temperatura" onChangeText={setTextTemperatura}  value={String(TextTemperatura)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
-              <Text style={styles.labelInput}>Pluviosidade (mm)</Text>
-              <TextInput placeholder="Pluviosidade"  onChangeText={setTextPluviosidade}   value={String(TextPluviosidade)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
-              <Text style={styles.labelInput}>Umidade do Ar (%)</Text>
-              <TextInput placeholder="Umidade do Ar"  onChangeText={setTextUmidade}  value={String(TextUmidade)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
-              <Text style={styles.labelInput}>Pressão Atmosférica (hPa)</Text>
-              <TextInput placeholder="Pressão Atmosférica"  onChangeText={setTextPressao}   value = {String(TextPressao)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+    <View style={styles.container}>
+      <View style={styles.header}>
+            <Text style={styles.textHeader}>Configurações de Eventos Extremos</Text>
+            <View style={styles.lineHeader}></View> 
+          </View>
+          <Text style={styles.labelInput}>Temperatura (°)</Text>
+          <TextInput placeholder="Temperatura" onChangeText={setTextTemperatura}  value={String(TextTemperatura)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+          <Text style={styles.labelInput}>Umidade do Ar (%)</Text>
+          <TextInput placeholder="Umidade do Ar"  onChangeText={setTextUmidade}  value={String(TextUmidade)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+          <Text style={styles.labelInput}>Pressão Atmosférica (hPa)</Text>
+          <TextInput placeholder="Pressão Atmosférica"  onChangeText={setTextPressao}   value = {String(TextPressao)} style={styles.input} maxLength={4} keyboardType='numeric'></TextInput>
+          <Text style={styles.labelInput}>Deseja receber notificações?</Text>
+          {
+          (loading)?
+          <Text></Text>
+             :
+          <RadioForm
+            radio_props={radio_props}
+            initial={indexRdb}
+            onPress={value => setOption(value)}
+            buttonColors={'#447EF2'}
 
-              <TouchableOpacity style={styles.btn} onPress={()=>saveInformation()}>
-            <Text style={styles.btnText}>Confirmar</Text>
-            </TouchableOpacity>
-            
-            </View>
-      
+          />
+        }
+          <TouchableOpacity style={styles.btn} onPress={()=>saveInformation()}>
+        <Text style={styles.btnText}>Confirmar</Text>
+        </TouchableOpacity>
+        
+        </View>
+  
 
-    );
+);
   }
   
   export default Setting;
@@ -207,7 +226,7 @@ const Setting = () => {
     },
     input:{
       backgroundColor: "#f7f7f7",
-      marginTop: 5,
+      marginTop: 1,
       width: "100%",
       borderRadius: 10,
       shadowColor: '#000',
@@ -220,6 +239,7 @@ const Setting = () => {
       color: "#000",
       fontFamily: "Roboto",
       marginTop: 5,
+      marginBottom: 5,
       fontFamily: "Roboto",
     
     },

@@ -51,10 +51,15 @@ const handleNotification = (parametro,valor,unidade,dia,mes,ano,hora,minuto,segu
     data = new Date()
     AsyncStorage.getItem('@UmidadeMinuto').then(async (value)=>{
       if(data.getMinutes() != value){
-        handleNotification("AAAAAAAAAAAAAAAAAA","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
-        AsyncStorage.setItem('@UmidadeMinuto', String(data.getMinutes())).then(()=>{
-          console.log("FOI")
-        })                     
+         AsyncStorage.getItem('@radiobutton').then(async (value)=>{
+              if(value==="0"){
+                handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
+                AsyncStorage.setItem('@UmidadeMinuto', String(data.getMinutes())).then(()=>{
+                  console.log("FOI asasas")
+                }) 
+              }
+          }) 
+                     
       }
     })
     

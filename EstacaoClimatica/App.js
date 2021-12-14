@@ -10,6 +10,8 @@ import BackgroundFetch from 'react-native-background-fetch';
 import BackgroundTimer from 'react-native-background-timer';
 import BackgroundService from 'react-native-background-actions';
 
+
+
 let data = new Date()
 let checkFirstTime 
 let second = data.getSeconds();
@@ -74,6 +76,19 @@ async function getPressao(){
 }
 }
 
+async function getUmidade(){
+  try {
+      const value = await AsyncStorage.getItem('@umidade');
+      if (value === null) {
+        // We have data!!
+       
+        await AsyncStorage.setItem('@umidade',"50")
+      }
+
+    } catch (error) {
+}
+}
+
 
 async function createMinuteUmidade(){
   try {
@@ -123,12 +138,12 @@ async function stateActive(){
   }
 }
 
-async function activeCheckbox(){
+async function activeRadioButton(){
   try {
-    const value = await AsyncStorage.getItem('@checkbox');
+    const value = await AsyncStorage.getItem('@radiobutton');
     if (value === null) {
-      // We have data!!
-      await AsyncStorage.setItem('@checkbox',"true")
+      console.log("aqui ficou 0 o radiobutton")
+      await AsyncStorage.setItem('@radiobutton',"0")
     }
 
   } catch (error) {
@@ -143,6 +158,7 @@ const App = ()=>{
   useEffect(() => {
     createChannels()
     stateActive()
+    activeRadioButton()
     setTimeout(()=>{
       data = new Date()
 
@@ -163,11 +179,15 @@ const App = ()=>{
                   AsyncStorage.getItem('@UmidadeMinuto').then(async (value)=>{
                     console.log(value)
                     if(data.getMinutes() != value){
-                      
-                      handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
-                      AsyncStorage.setItem('@UmidadeMinuto', String(data.getMinutes())).then(()=>{
-                        console.log("FOI")
-                      })                     
+                      AsyncStorage.getItem('@radiobutton').then(async (value)=>{
+                        if(value==="0"){
+                          handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
+                          AsyncStorage.setItem('@UmidadeMinuto', String(data.getMinutes())).then(()=>{
+                            console.log("FOI")
+                          }) 
+                        }
+                    })
+                                                           
                     }
                   })
                 }
@@ -192,6 +212,7 @@ const App = ()=>{
     getPluviosidade()
     getTemperatura()
     getPressao()
+    getUmidade()
     createMinutePressao()
     createMinuteTemperatura()
     createMinuteUmidade()
@@ -202,8 +223,8 @@ const App = ()=>{
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Tabs" headerMode="screen">
                 <Stack.Screen name="Tabs" component={Tabs} options={{headerShown:false}}/>
-                <Stack.Screen name="SettingGraph" component={SettingGraph} options={({ route }) => ({ title: route.params.name})}/>
-                <Stack.Screen name="Graphic" component={Graphic} options={{ title: 'Gráfico' }}/>           
+                <Stack.Screen name="SettingGraph" component={SettingGraph} options={({ route }) => ({ title: route.params.name, headerTintColor: '#447EF2',})}/>
+                <Stack.Screen name="Graphic" component={Graphic} options={{ title: 'Gráfico',headerTintColor: '#447EF2', }}/>           
             </Stack.Navigator>
            
         </NavigationContainer>
