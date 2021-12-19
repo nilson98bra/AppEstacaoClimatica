@@ -180,6 +180,7 @@ const App = ()=>{
                     console.log(value)
                     if(data.getMinutes() != value){
                       AsyncStorage.getItem('@radiobutton').then(async (value)=>{
+
                         if(value==="0"){
                           handleNotification("Umidade do Ar","70","%",data.getDate().toString().padStart(2, "0"),(data.getMonth() + 1).toString().padStart(2, "0"),data.getFullYear(),data.getHours(),data.getMinutes(),data.getSeconds())
                           AsyncStorage.setItem('@UmidadeMinuto', String(data.getMinutes())).then(()=>{

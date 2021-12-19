@@ -36,7 +36,7 @@ function getDates (startDate, nDays) {
 const dates = getDates(new Date("2017-06-22"), 1440)
 const values = generateValues(1440)
 
-console.log(dates)
+
 
 
 
@@ -53,7 +53,7 @@ const SettingGraph = ({ navigation: { navigate }, route  }) => {
     const onChange = (event, selectedDate) => {
       const currentDate = selectedDate
       setShow(Platform.OS === 'ios');
-      console.log(currentDate)
+      
       if(currentDate != undefined){
         if(input == 1){
  
